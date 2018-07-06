@@ -1,0 +1,499 @@
+id: ordinateur-001
+type: Thing
+name:
+  - ordi
+  - ordinateur
+events:
+  info:
+    actor: |
+      Un ordinateur allumé.
+  look:
+    actor: |
+      <center><img src='../static/images/ordinateurS.jpg' width=500/><br />Vous voyez des lignes de code sur l'écran qui peuvent êtres utile.</center>
+---
+id: ordinateur-002
+type: Thing
+name:
+  - iMac
+  - Mac
+  - mac
+  - apple
+events:
+  info:
+    actor: |
+      iMac allumé.
+  look:
+    actor: |
+      <center><img src='../static/images/osx-panic.png' width=500/><br />L'écran de l'iMac.</center>
+---
+id: ordinateur-003
+type: Thing
+name:
+  - info24-15
+events:
+  info:
+    actor: |
+      info24-15 allumé.
+  look:
+    actor: |
+      <center><img src='../static/images/linux-panic.png' width=500/><br />L'écran de l'ordinateur info24-15.</center>
+---
+id: ordinateur-004
+type: Thing
+name:
+  - info24-25
+events:
+  info:
+    actor: |
+      info24-25 allumé.
+  look:
+    actor: |
+      <center><img src='../static/images/xfce-412.png' width=500/><br />L'écran de l'ordinateur info24-25.</center>
+---
+id: ordinateur-005
+type: Thing
+name:
+  - info21-22
+events:
+  info:
+    actor: |
+      info21-22 allumé.
+  look:
+    actor: |
+      <center><img src='../static/images/xubuntu.png' width=500/><br />L'écran de l'ordinateur info21-22.</center>
+---
+id: ordinateur-006
+type: Thing
+name:
+  - info21-11
+events:
+  info:
+    actor: |
+      info21-11 allumé.
+  look:
+    actor: |
+      <center><img src='../static/images/Artful_1.png' width=500/><br />Vous n'avez pas d'identifiants...</center>
+---
+id: ordinateur-007
+type: Thing
+name:
+  - info22-16
+events:
+  info:
+    actor: |
+      info22-16 allumé.
+  look:
+    actor: |
+      <center><img src='../static/images/pxelinux.png' width=500/><br />L'écran semble gelé...</center>
+---
+id: ordinateur-008
+type: Thing
+name:
+  - info22-21
+events:
+  info:
+    actor: |
+      info22-21 allumé.
+  look:
+    actor: |
+      <center><img src='../static/images/glitched.jpg' width=500/><br />Inutilisable.</center>
+---
+id: ordinateur-009
+type: Thing
+name:
+  - info23-19
+events:
+  info:
+    actor: |
+      info23-19 allumé.
+  look:
+    actor: |
+      <center><img src='../static/images/broken.jpg' width=500/><br />L'écran semble avoir été frappé fort.</center>
+---
+id: ordinateur-010
+type: Thing
+name:
+  - info23-09
+events:
+  info:
+    actor: |
+      info23-09 allumé.
+  look:
+    actor: |
+      <center><img src='../static/images/troll.jpg' width=500/><br />L'écran de l'ordinateur 23-09.</center>
+---
+id: canettes-000
+type: Thing
+name:
+  - canette
+  - coca
+props:
+  - takable
+events:
+  info:
+    actor: |
+      Une canette de coca
+  talk:
+    actor: |
+      Vous prenez la canette de coca.
+    observer: |
+      {{actor.name}} prend une canette de coca.
+---
+id: paquetCookies-000
+type: Thing
+name:
+  - cookies
+  - paquet
+props:
+  - takable
+events:
+  info:
+    actor: |
+      Un paquet de cookies
+  talk:
+    actor: |
+      Vous prenez le paquet de cookies.
+    observer: |
+      {{actor.name}} prend un paquet de cookies.
+---
+id: ordinateur-000
+type: Thing
+names:
+  - ordinateur
+  - ordi
+props:
+  - light-on
+events:
+  info:
+    actor: "Un serveur."
+  look:
+    actor: |
+      Le serveur est allumé, mais un mot de passe bloque l'accès.</i>
+  type:
+    - props: event:typed-xyzzy
+      effects:
+        - type  : EnterPortalEffect
+          exit  : =portal-ordinateur-station-000-exit-1
+      observer: |
+        {{ actor.name }} entre un mot de passe dans l'ordinateur.
+    - actor: |
+        Ce n'est pas le bon mot de passe.
+      observer: |
+        {{ actor.name }} entre un mot de passe dans l'ordinateur,
+        mais ce n'est pas le bon.
+
+---
+id: station-000
+type: Location
+contains:
+  - jurrican-000
+events:
+  info:
+    actor: "Une station service."
+  look:
+    actor: |
+      Une station service abandonnee.
+
+---
+id: jurrican-000
+type: Thing
+name:
+  - jurrican
+  - essence
+props:
+  - takable
+  - jurrican-pour-voiture-000
+events:
+  info:
+    actor: "Un jurrican d'essence."
+  look:
+    actor: |
+      Un jurrican d'essence.
+---
+id: cabane-000
+type: Location
+events:
+  info:
+    actor: "Une cabane dans un arbre."
+  look:
+    actor: |
+      Vous êtes dans une cabane construite dans un arbre.
+      Elle surplombe un gouffre dans lequel se déverse une
+      cascade.  A l'est, une ouverture dans la balustrade
+      semble vous offrir la dangereuse option de sauter dans
+      le vide.  Sur le mur, un bouton est étiquetté:
+      <i>Taxi Service</i>.
+parts:
+  - bouton-cabane-000
+---
+id: bouton-cabane-000
+type: Thing
+name:
+  - bouton
+props:
+  - pushable
+events:
+  look:
+    actor: |
+      Un bouton étiqueté: <i>Taxi Service</i>.
+  push:
+    actor: |
+      Vous appuyez sur le bouton, mais rien ne semble se
+      produire.
+    observer: |
+      {{ actor.name }} appuie sur le bouton, mais rien ne
+      semble se produire.
+    effects:
+      - type  : ChangePropEffect
+        modifs: =portal-ordinateur-cabane-exit-2:activated
+      - type  : NarrativeEffect
+        at    : =salle-22-000
+        key   : bouton-cabane
+---
+id: lampe-000
+type: Thing
+props:
+  - lightable
+  - takable
+names   :
+  - lampe
+  - pile
+  - lampe-torche
+gender: fem
+events:
+  info:
+    actor:
+      - props: =lampe-000:light-on
+        data : "Une lampe-torche allumée."
+      - data : "Une lampe-torche éteinte."
+  look:
+    actor:
+      - props: object:light-on
+        data : "Une lampe-torche allumée."
+      - data : "Une lampe-torche éteinte."
+  light-on:
+    - props : object:light-on
+      actor : "La lampe est déjà allumée."
+    - actor : "Vous allumez votre lampe-torche."
+      observer: |
+        {{ actor.name }} allume sa lampe-torche.
+      effects:
+        - type  : ChangePropEffect
+          modifs: object:light-on
+  light-off:
+    - props : -object:light-on
+      actor : "La lampe est déjà éteinte."
+    - actor : "Vous éteignez votre lampe-torche."
+      observer: |
+        {{ actor.name }} éteint sa lampe-torche.
+      effects:
+        - type  : ChangePropEffect
+          modifs: -object:light-on
+---
+id: lecteur-cassette-000
+type: Thing
+name:
+  - lecteur
+props:
+  - playable
+  - takable
+events:
+  look:
+    actor: |
+      Un lecteur cassette de 1975
+  play:
+    actor: |
+      Vous entendez : "Si vous entendez ce message c'est que je suis mort, l'invasion des lapins a eu lieu et je vais essayer de trouver un moyen d'y mettre un terme!
+    observer: |
+      Vous entendez : "Si vous entendez ce message c'est que je suis mort, l'invasion des lapins a eu lieu et je vais essayer de trouver un moyen d'y mettre un terme!
+---
+id: cahier-000
+type: Thing
+name:
+  - cahier
+props:
+  - readable
+  - takable
+events:
+  look:
+    actor: |
+      Un cahier. Vous pourriez vouloir le lire.
+  info:
+    actor: |
+      Un cahier d'étudiant.
+  read:
+    actor: |
+      <center><img src='../static/images/cahier.jpg' width=500/></center>
+    observer: |
+      Un de vos amis sait lire.
+
+---
+id: esprit-000
+type: Thing
+name:
+  - esprit
+props:
+  - talkable
+events:
+  info:
+    actor: |
+      Un esprit d'un étudiant torturé
+  talk:
+    actor: |
+      Bonsoir. Tu ne devrais pas rester.
+    observer: |
+      Un de vos amis parle à un esprit !
+---
+id: esprit-001
+type: Thing
+name:
+  - esprit
+props:
+  - talkable
+events:
+  info:
+    actor: |
+      Un esprit d'un étudiant torturé
+  talk:
+    actor: |
+      J'ai réussi à hacker le serveur de l'IUT ! ENFIN !!!
+    observer: |
+      Un de vos amis parle à un esprit !
+---
+id: piece-000
+type: Thing
+name:
+  - piece
+props:
+  - takable
+  - piece-pour-machine-000
+events:
+  info:
+    actor: |
+      Une pièce de 1€
+  talk:
+    actor: |
+      Vous ramassez une pièce de 1€.
+    observer: |
+      {{actor.name}} ramasse une piece, quelle richesse !
+---
+id: briquet-000
+type: Thing
+props:
+  - lightable
+  - takable
+names   :
+  - briquet
+events:
+  info:
+    actor:
+      - props: =briquet-000:light-on
+        data : "Un briquet allumé."
+      - data : "Un briquet éteint."
+  look:
+    actor:
+      - props: object:light-on
+        data : "Un briquet allumé."
+      - data : "Un briquet éteint."
+  light-on:
+    - props : object:light-on
+      actor : "Le briquet est déjà allumé."
+    - actor : "Vous allumez votre briquet."
+      observer: |
+        {{ actor.name }} allume son briquet.
+      effects:
+        - type  : ChangePropEffect
+          modifs: object:light-on
+  light-off:
+    - props : -object:light-on
+      actor : "Le briquet est déjà éteint."
+    - actor : "Vous éteignez votre briquet."
+      observer: |
+        {{ actor.name }} éteint son briquet.
+      effects:
+        - type  : ChangePropEffect
+          modifs: -object:light-on
+---
+id: key-000
+type: Thing
+names:
+  - clé01
+  - cle01
+  - clé1
+  - cle01
+gender: fem
+props:
+  - takable
+  - key-for-secretariat-000
+events:
+  info:
+    actor: |
+      Une clé étiquettée "01".
+  talk:
+    actor: |
+      Vous ramassez une clé labellée 01.
+    observer: |
+      {{actor.name}} ramasse une clé.
+---
+id: key2-000
+type: Thing
+names:
+  - clé02
+  - cle02
+  - clé2
+  - cle02
+gender: fem
+props:
+  - takable
+  - key-for-salle21-000
+events:
+  info:
+    actor: |
+      Une clé étiquettée "02".
+  talk:
+    actor: |
+      Vous ramassez une clé labellée 02.
+    observer: |
+      {{actor.name}} ramasse une clé.
+---
+id: key3-000
+type: Thing
+names:
+  - clé03
+  - cle03
+  - clé3
+  - cle03
+gender: fem
+props:
+  - takable
+  - key-for-salleens-000
+events:
+  info:
+    actor: |
+      Une clé étiquettée "03".
+  talk:
+    actor: |
+      Vous ramassez une clé labellée 03.
+    observer: |
+      {{actor.name}} ramasse une clé.
+---
+id: key4-000
+type: Thing
+names:
+  - clé04
+  - cle04
+  - clé4
+  - cle04
+gender: fem
+props:
+  - takable
+  - key-for-serveur-000
+events:
+  info:
+    actor: |
+      Une clé étiquettée "04".
+  talk:
+    actor: |
+      Vous ramassez une clé labellée 04.
+    observer: |
+      {{actor.name}} ramasse une clé.

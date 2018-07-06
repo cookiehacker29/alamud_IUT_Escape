@@ -1,0 +1,501 @@
+id: run-000
+type: Location
+events:
+  info:
+    actor: "
+    Vous vous réveillez avec un horrible mal de crâne... Et confus.<br/>
+    Votre objectif est de trouver l'essence nécessaire pour démarrer votre
+    voiture.<br/>
+    <strong>(Avancez vers le nord pour commencer)</strong>"
+---
+id: parking-000
+type: Location
+events:
+  info:
+    actor: "<center><img src='../static/images/Parking.jpg' width=400/><br />Parking de l'IUT.</center>"
+  look:
+    actor: |
+      Vous êtes sur le parking de l'IUT. Au nord-est se trouve
+      l'entrée du département Informatique. Au nord-ouest se trouvent
+      les amphithéâtres.
+---
+id: voiture-000
+type: Location
+events:
+  info:
+    actor: "Dans la voiture."
+  look:
+    actor: |
+      Vous êtes dans la voiture. Le moteur est éteint. Il y a une boîte à gants.
+parts:
+  - handbox-000
+---
+id: fin-000
+type: Location
+events:
+  info:
+    actor: "Feliciations, vous venez de survivre à une invasion de contrôles surprise !"
+---
+id: portal-parking-fin-000
+type: Portal
+props:
+  - closed
+  - closable
+exits:
+  - id: parking-000-sud
+    location: parking-000
+    direction: fuir
+    name:
+      - voiture
+    gender: fem
+    props:
+      - for-enter
+    events:
+      enter-portal:
+        actor     : "Vous fuyez de l'IUT !"
+        observer  : "{{ actor.name }} vous fuyez de l'IUT !"
+        failed:
+          actor   : &porte001 |
+            Ce que vous faites n'est pas une bonne idée
+          observer: &porte002 |
+            {{ actor.name }} tente en vain d'interagir avec la voiture.
+      leave-portal:
+        actor     : "Vous revenez à l'IUT"
+        observer  : "{{ actor.name }} reviens."
+      fill        :
+        - props   : portal:closed
+          actor   : *porte001
+          observer: *porte002
+        - props   : -portal:closed
+          actor   : &porte003 "La voiture est déjà prête."
+      fill-with   :
+        - props   :
+            - portal:closed
+            - object2:jurrican-pour-voiture-000
+          effects :
+            type  : ChangePropEffect
+            modifs:
+              - -portal:closed
+          actor   : |
+            La voiture est enfin prête pour la fuite ! (<b>fuir</b> pour fuir !)
+          observer: |
+            {{ actor.name }} a fini la preparation de la voiture.
+        - props   :
+            - portal:closed
+            - -object2:jurrican-pour-voiture-000
+          actor   : |
+            Vous tentez vainement de remplir la voiture avec
+            {{ object2.noun_the() }}
+          observer: |
+            {{ actor.name }} tente vainement de remplir la
+            voiture avec {{ object2.noun_a() }}
+        - props   :
+            - -portal:closed
+          actor   : *porte003
+          observer: |
+            {{ actor.name }} tente futilement de remplir la voiture
+            avec {{ object2.noun_a() }}, alors
+            qu'elle est déjà remplis.
+      close       : &porte004
+        - props   : portal:closed
+          actor   : "Vous videz la voiture."
+          observer: "{{ actor.name }} prefere rester à l'IUT."
+          effects :
+            - type  : ChangePropEffect
+              modifs: =portal-porche-hall-000:closed
+      close-with  : *porte004
+  - id: fin-000-ouest
+    location: fin-000
+    name: porte
+    gender: fem
+    props:
+      - for-leave
+    events:
+      enter-portal:
+        observer  : "{{ actor.name }} sort de la fin."
+        failed:
+          actor   : |
+            Tu ne peux rien faire ainsi.
+
+---
+id: handbox-000
+type: Container
+names:
+  - boîte
+  - boite
+gender: fem
+events:
+  look:
+    actor: |
+      C'est une boîte à gants...
+contains:
+  - piece-000
+  - lampe-000
+---
+id: gmp-000
+type: Location
+contains:
+  - key-000
+events:
+  info:
+    actor: "<center><img src='../static/images/cafet-GMP.jpg' width=400/><br />Entrée du bâtiment GMP.</center>"
+  look:
+    actor: |
+      Vous êtes devant le bâtiment GMP, situé au nord.
+      Vous trouvez à l'ouest la cafétéria de l'I.U.T..
+---
+id: amphis-000
+type: Location
+events:
+  info:
+    actor: "<center><img src='../static/images/C1-C2.jpg' width=400/><br />Amphithéâtres C1 et C2 de l'IUT.</center>"
+  look:
+    actor: |
+      Vous êtes devant les amphithéâtres C1 et C2
+      de l'I.U.T.. Au nord se trouvent le bâtiment GMP et
+      la cafétéria. À l'est est l'entrée du bâtiment C2,
+      au nord-ouest celle du bâtiment C1.
+---
+id: cafeteria-000
+type: Location
+events:
+  info:
+    actor: "<center><img src='../static/images/interieur-cafet.jpg' width=400/><br />Les machines derrière la cafétéria.</center>"
+  look:
+    actor: |
+      Vous êtes devant les distributeurs. La sortie est à l'est.
+---
+id: amphi-c1-000
+type: Location
+contains:
+  - briquet-000
+  - cahier-000
+events:
+  info:
+    actor: "<center><img src='../static/images/C2.jpg' width=400/><br />Amphithéâtre C1.</center>"
+  look:
+    actor: |
+      Vous êtes dans l'amphithéâtre C1. La sortie est à l'ouest.
+---
+id: amphi-c2-000
+type: Location
+contains:
+  - badge-000
+events:
+  info:
+    actor: "<center><img src='../static/images/C1.jpg' width=400/><br />Amphithéâtre C2.</center>"
+  look:
+    actor: |
+      Vous êtes dans l'amphithéâtre C2. La sortie est à l'ouest.
+---
+id: badge-000
+type: Thing
+name: badge
+props:
+  - takable
+  - key-for-porte-porche-000
+events:
+  info:
+    actor: "Un badge de sécurité."
+  look:
+    actor: |
+      C'est un badge de sécurité permettant d'ouvrir des
+      portes sécurisées.
+---
+id: porche-000
+type: Location
+events:
+  info:
+    actor: "<center><img src='../static/images/porche.jpg' width=400/><br />Porche du département info.</center>"
+  look:
+    actor: |
+      Vous êtes sur le porche du département info.
+      Au nord-est, une porte donne accès au hall du
+      département. Au sud-ouest, une allée mène au
+      parking de l'IUT.
+---
+id: hall-000
+type: Location
+contains:
+  - esprit-000
+events:
+  info:
+    actor: "<center><img src='../static/images/hall.jpg' width=400/><br />Le hall du département info.</center>"
+  look:
+    actor: |
+      Vous êtes dans le hall du département info de l'IUT.
+      Au sud-ouest, la porte d'entrée mène au porche. À l'est, le secrétariat.
+      Au nord-ouest, l'escalier ouest, au nord-est l'escalier est.
+      À l'ouest se trouve l'ascenseur.
+parts:
+  - tableau-000
+  - notice-000
+---
+id: secretariat-000
+type: Location
+contains:
+  - key2-000
+events:
+  info:
+    actor: "<center><img src='../static/images/secretariat.jpg' width=400/><br />Le secrétariat du département informatique.</center>"
+  look:
+    actor: |
+      Vous êtes dans le secrétariat du département.
+      Les bureaux sont recouverts de documents et de matériel
+      administratif.
+---
+id: tableau-000
+type: Thing
+name: tableau
+events:
+  info:
+    actor: "Un tableau d'affichage."
+  look:
+    actor: |
+      Sur le tableau d'affichage une notice jaune est
+      fixée par une punaise.
+---
+id: notice-000
+type: Thing
+name: notice
+gender: fem
+events:
+  info:
+    actor: "Une notice"
+  look:
+    actor: |
+      <center><img src='../static/images/et.jpg' width=400/><br />Emplois du temps</center>
+---
+id: etage-east-000
+type: Location
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/etage-est.jpg' width=400/><br />Étage - Est</center>"
+  look:
+    actor: |
+      Vous êtes en bas de l'escalier. À l'ouest se trouve la porte de
+      sortie ouest. Au nord se trouvent des salles de cours. À l'est
+      un couloir. L'étage est en haut.
+---
+id: etage-center-000
+type: Location
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/etage-central.jpg' width=400/><br />Étage - Est</center>"
+  look:
+    actor: |
+      Vous êtes au centre de l'escalier. Au nord se trouve la salle
+      du serveur, au nord-ouest la salle 24, à l'ouest l'étage ouest,
+      à l'est l'étage est. Au sud se trouve l'étage sud.
+---
+id: etage-south-000
+type: Location
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/etage-sud.jpg' width=400/><br />Étage - Sud.</center>"
+  look:
+    actor: |
+      Vous êtes sur la partie sud de l'étage. Des tables équipées
+      de bancs sont présentes. Au nord-ouest se trouve l'étage ouest,
+      au nord l'étage centre et au nord-est l'étage est.
+---
+id: salle-21-000
+type: Location
+contains:
+  - ordinateur-005
+  - ordinateur-006
+  - key3-000
+props:
+  - dark
+events:
+  info:
+    actor: "Salle 21."
+  look:
+    actor: |
+      Vous êtes dans la salle 21 du département. Les ordinateurs sont
+      ici éteints. À l'est se trouve l'étage ouest.
+---
+id: escalier-ouest-000
+type: Location
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/escalier-ouest.jpg' width=400/><br />Escalier ouest.</center>"
+  look:
+    actor: |
+      Vous êtes en bas de l'escalier. À l'ouest se trouve la porte de
+      sortie ouest. Au nord se trouvent des salles de cours. À l'est
+      un couloir. L'étage est en haut.
+---
+id: escalier-est-000
+type: Location
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/escalier-est.jpg' width=400/><br />Escalier est.</center>"
+  look:
+    actor: |
+      Vous êtes en bas de l'escalier. À l'ouest se trouve la porte de
+      sortie ouest. Au nord se trouvent des bureaux. À l'ouest
+      un couloir. L'étage est en haut.
+---
+id: couloir-ens-000
+type: Location
+props:
+  - dark
+contains:
+  - key4-000
+events:
+  info:
+    actor: "<center><img src='../static/images/couloir.jpg' width=400/><br />Couloir central.</center>"
+  look:
+    actor: |
+      Vous êtes dans le couloir du rez-de-chaussée. Au sud se trouve
+      la salle des enseignants, à l'ouest l'escalier ouest, à l'est
+      l'escalier est.
+---
+id: salle-ens-000
+type: Location
+contains:
+ - key4-000
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/salle-enseignants.jpg' width=400/><br />Salle des enseignants.</center>"
+  look:
+    actor: |
+      Vous êtes dans la salle des enseignants. Au nord se trouve
+      le couloir central du rez-de-chaussée.
+---
+id: etage-000
+type: Location
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/1eIUT.jpg' width=400/><br />Étage du département info.</center>"
+  look:
+    actor: |
+      Vous êtes à l'ouest de l'étage du département. Au nord-ouest,
+      la salle 22 est ouverte. Au nord, la salle 23. À l'ouest,
+      la salle 21. À l'est la partie centrale de l'étage,
+      au sud-est la partie sud de l'étage. Au sud, l'ascenseur.
+---
+id: salle-22-000
+type: Location
+contains:
+  - ordinateur-007
+  - ordinateur-008
+props:
+  - dark
+events:
+  info:
+    actor: "Salle 22."
+  look:
+    actor: |
+      Vous êtes dans la salle 22. Au sud-est, une porte donne sur la partie
+      centrale de l'étage.
+---
+id: salle-24-000
+type: Location
+contains:
+  - ordinateur-003
+  - ordinateur-004
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/salle_i24.jpg' width=400/><br />Salle 24.</center>"
+  look:
+    actor: |
+      Vous êtes dans la salle 24. Au sud-est, une porte donne sur la partie
+      centrale de l'étage.
+---
+id: salle-23-000
+type: Location
+contains:
+  - ordinateur-009
+  - ordinateur-010
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/salle_i23.jpg' width=400/><br />Salle 23.</center>"
+  look:
+    actor: |
+      Vous êtes dans la salle 23. Au sud, une porte donne sur la partie
+      ouest de l'étage.
+---
+id: salle-serveur-000
+type: Location
+props:
+  - dark
+events:
+  info:
+    actor: "Salle serveur."
+  look:
+    actor: |
+      Vous êtes dans la salle du serveur. Ledit serveur se dresse devant vous.
+parts:
+  - ordinateur-000
+---
+id: souvenir-000
+type: Location
+contains:
+  - esprit-001
+  - ordinateur-001
+  - canettes-000
+events:
+  info:
+    actor: "Vous voyez le souvenir d'un des étudiants de l'IUT."
+  look:
+    actor: |
+      Vous êtes dans une chambre d'étudiant où vous voyez un bureau et un ordinateur
+      allumer.
+---
+id: couloir-nord-000
+type: Location
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/couloir-nord.jpg' width=400/><br />Salle 23.</center>"
+  look:
+    actor: |
+      Vous êtes dans le couloir nord au rez-de-chaussée ; la sortie est verrouillée.
+      L'escalier ouest est au sud.
+---
+id: couloir-bureaux-000
+type: Location
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/couloir-bureaux.jpg' width=400/><br />Couloir des bureaux.</center>"
+  look:
+    actor: |
+      Vous vous trouvez dans le couloir des bureaux enseignants, au rez-de-chaussée. Au sud se trouve l'escalier est,
+      au nord un bureau ouvert.
+---
+id: bureau-000
+type: Location
+contains:
+  - ordinateur-002
+props:
+  - dark
+events:
+  info:
+    actor: "<center><img src='../static/images/bureau-melin-prevost.jpg' width=400/><br />Bureau de Mr MELIN et Mme PREVOST.</center>"
+  look:
+    actor: |
+      Vous êtes dans le bureau de Mr MELIN et Mme PREVOSt, comme indiqué sur l'étiquette de la
+      porte. Au sud se trouve le couloir d'accès.

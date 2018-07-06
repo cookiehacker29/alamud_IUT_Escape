@@ -1,0 +1,825 @@
+id: portal-run-parking-000
+type: Portal
+exits:
+  - id: parking-run-000
+    location: run-000
+    direction: nord
+    events:
+      enter-portal:
+        actor   : "Méfiance..."
+  - id: parking-run-intro-000
+    location: parking-000
+---
+id: portal-parking-voiture-000
+type: Portal
+exits:
+  - id: parking-voiture-000
+    location: parking-000
+    direction: haut
+    events:
+      enter-portal:
+        actor   : "Vous montez dans la voiture."
+        observer: "{{ actor.name }} monte dans la voiture."
+      leave-portal:
+        observer: |
+          {{ actor.name }} descend de la voiture.
+  - id: voiture-parking-000
+    location: voiture-000
+    direction: bas
+    events:
+      enter-portal:
+        actor   : "Vous descendez du véhicule."
+        observer: "{{ actor.name }} descend du véhicule."
+      leave-portal:
+        observer: "{{ actor.name }} descend du véhicule."
+---
+id: portal-parking-amphis-000
+type: Portal
+exits:
+  - id: parking-amphis-000
+    location: parking-000
+    direction: nord-ouest
+  - id: amphis-parking-000
+    location: amphis-000
+    direction: sud-est
+---
+id: portal-amphis-gmp-000
+type: Portal
+exits:
+  - id: amphis-gmp-000
+    location: amphis-000
+    direction: nord
+  - id: gmp-amphis-000
+    location: gmp-000
+    direction: sud
+---
+id: portal-amphis-c1-000
+type: Portal
+exits:
+  - id: amphis-ac1-000
+    location: amphis-000
+    direction: nord-est
+  - id: ac1-amphis-000
+    location: amphi-c1-000
+    direction: ouest
+---
+id: portal-gmp-cafeteria-000
+type: Portal
+props:
+  - closed
+  - closable
+exits:
+  - id: gmp-cafeteria-000
+    location: gmp-000
+    direction: ouest
+    name:
+      - porte
+    gender: fem
+    events:
+      enter-portal:
+        actor     : "Vous entrez derrière la cafétéria."
+        observer  : "{{ actor.name }} entre derrière la cafétéria."
+        failed:
+          actor   : &porte001 |
+            La porte arrière est verrouillée électriquement, et nécessite
+            un badge pour être ouverte.
+          observer: &porte002 |
+            {{ actor.name }} tente en vain d'ouvrir la porte arrière
+            de la cafétéria.
+      leave-portal:
+        actor     : "Vous sortez de derrière la cafétéria."
+        observer  : "{{ actor.name }} sort de derrière la cafétéria."
+      open        :
+        - props   : portal:closed
+          actor   : *porte001
+          observer: *porte002
+        - props   : -portal:closed
+          actor   : &porte003 "La porte est déjà ouverte!"
+      open-with   :
+        - props   :
+            - portal:closed
+            - object2:key-for-porte-porche-000
+          effects :
+            type  : ChangePropEffect
+            modifs:
+              - -portal:closed
+          actor   : |
+            La porte ouest s'ouvre.
+          observer: |
+            {{ actor.name }} ouvre la porte ouest
+            avec un badge de sécurité.
+        - props   :
+            - portal:closed
+            - -object2:key-for-porte-porche-000
+          actor   : |
+            Vous tentez vainement d'ouvrir la porte ouest avec
+            {{ object2.noun_the() }}
+          observer: |
+            {{ actor.name }} tente vainement d'ouvrir la porte ouest avec {{ object2.noun_a() }}
+        - props   :
+            - -portal:closed
+          actor   : *porte003
+          observer: |
+            {{ actor.name }} tente futilement d'ouvrir la porte ouest avec {{ object2.noun_a() }}, alors
+            qu'elle est déjà ouverte.
+      close       : &porte004
+        - props   : portal:closed
+          actor   : "Vous fermez la porte ouest."
+          observer: "{{ actor.name }} ferme la porte ouest."
+          effects :
+            - type  : ChangePropEffect
+              modifs: =portal-porche-hall-000:closed
+      close-with  : *porte004
+  - id: cafeteria-gmp-000
+    location: cafeteria-000
+    direction: est
+    events:
+      enter-portal:
+        observer  : "{{ actor.name }} sort de derrière la cafétéria."
+        failed:
+          actor   : |
+            La porte est sécurisée.
+            Elle est actuellement fermée et, même pour sortir,
+            elle ne peut être ouverte qu'avec un badge de sécurité.
+          observer: |
+            {{ actor.name }} tente en vain de sortir par la porte.
+---
+id: gmp-entry-000
+type: Portal
+props:
+  - closed
+exits:
+  - id: gmp-locked-000
+    location: gmp-000
+    direction: nord
+    name:
+      - porte-gmp
+    gender: fem
+    events:
+      enter-portal:
+        actor     : "Vous entrez dans le département GMP."
+        observer  : "{{ actor.name }} entre dans le département GMP."
+        failed:
+          actor   : &porte001 |
+            Les portes d'accès au bâtiment GMP sont fermées électriquement.
+          observer: &porte002 |
+            {{ actor.name }} tente en vain d'ouvrir la porte du
+            bâtiment GMP.
+      leave-portal:
+        actor     : "Vous sortez du département GMP."
+        observer  : "{{ actor.name }} sort du département GMP."
+---
+id: portal-parking-porche-000
+type: Portal
+exits:
+  - id: parking-000-nord-est
+    location: parking-000
+    direction: nord-est
+  - id: porche-000-sud-ouest
+    location: porche-000
+    direction: sud-ouest
+---
+id: portal-porche-hall-000
+type: Portal
+exits:
+  - id: porche-000-nord-est
+    location: porche-000
+    direction: nord-est
+  - id: hall-000-sud-ouest
+    location: hall-000
+    direction: sud-ouest
+---
+id: portal-hall-secretariat-000
+type: Portal
+props:
+  - closed
+exits:
+  - id: hall-secretariat-000
+    location: hall-000
+    direction: est
+    name:
+      - porte
+    gender: fem
+    events:
+      enter-portal:
+        actor     : "Vous entrez dans le secrétariat."
+        observer  : "{{ actor.name }} entre dans le secrétariat."
+        failed:
+          actor   : &porte001 |
+            La porte du secrétariat est verrouillée.
+          observer: &porte002 |
+            {{ actor.name }} tente en vain d'ouvrir la porte du secrétariat.
+      leave-portal:
+        actor     : "Vous sortez du secrétariat.."
+        observer  : "{{ actor.name }} sort du secrétariat."
+      open        :
+        - props   : portal:closed
+          actor   : *porte001
+          observer: *porte002
+        - props   : -portal:closed
+          actor   : &porte003 "La porte est déjà ouverte!"
+      open-with   :
+        - props   :
+            - portal:closed
+            - object2:key-for-secretariat-000
+          effects :
+            type  : ChangePropEffect
+            modifs:
+              - -portal:closed
+          actor   : |
+            La porte du secrétariat s'ouvre.
+          observer: |
+            {{ actor.name }} ouvre la porte du secrétariat
+            avec une clé.
+        - props   :
+            - portal:closed
+            - -object2:key-for-secretariat-000
+          actor   : |
+            Vous tentez vainement d'ouvrir la porte du secrétariat avec
+            {{ object2.noun_the() }}
+          observer: |
+            {{ actor.name }} tente vainement d'ouvrir la porte du secrétariat avec {{ object2.noun_a() }}
+        - props   :
+            - -portal:closed
+          actor   : *porte003
+          observer: |
+            {{ actor.name }} tente futilement d'ouvrir la porte du secrétariat avec {{ object2.noun_a() }}, alors
+            qu'elle est déjà ouverte.
+  - id: secretariat-hall-000
+    location: secretariat-000
+    direction: ouest
+    events:
+      enter-portal:
+        observer  : "{{ actor.name }} sort du secrétariat."
+        failed:
+          actor   : |
+            La porte est fermée à clé.
+          observer: |
+            {{ actor.name }} tente en vain de sortir par la porte.
+---
+id: portal-amphis-c2-000
+type: Portal
+exits:
+  - id: amphis-ac2-000
+    location: amphis-000
+    direction: est
+  - id: ac2-amphis-000
+    location: amphi-c2-000
+    direction: ouest
+---
+id: hall-vers-esc-000
+type: Portal
+exits:
+  - id: hall-000-nw
+    location: hall-000
+    direction: nord-ouest
+  - id: esc-000-se
+    location: escalier-ouest-000
+    direction: sud-est
+---
+id: hall-vers-esce-000
+type: Portal
+exits:
+  - id: hall-000-ne
+    location: hall-000
+    direction: nord-est
+  - id: esc-000-sw
+    location: escalier-est-000
+    direction: sud-ouest
+---
+id: west-couloir-000
+type: Portal
+exits:
+  - id: couloirrc-w-000
+    location: escalier-ouest-000
+    direction: est
+  - id: couloirrc-tw-000
+    location: couloir-ens-000
+    direction: ouest
+---
+id: east-couloir-000
+type: Portal
+exits:
+  - id: couloirrc-e-000
+    location: escalier-est-000
+    direction: ouest
+  - id: couloirrc-te-000
+    location: couloir-ens-000
+    direction: est
+---
+id: couloirrc-salleens-000
+type: Portal
+props:
+  - closed
+exits:
+  - id: couloirrc-ens-000
+    location: couloir-ens-000
+    direction: sud
+    name:
+      - porte
+    gender: fem
+    events:
+      enter-portal:
+        actor     : "Vous entrez dans la salle des enseignants."
+        observer  : "{{ actor.name }} entre dans la salle des enseignants."
+        failed:
+          actor   : &porte001 |
+            La porte de la salle des enseignants est verrouillée.
+          observer: &porte002 |
+            {{ actor.name }} tente en vain d'ouvrir la porte de la salle des enseignants.
+      leave-portal:
+        actor     : "Vous sortez de la salle des enseignants."
+        observer  : "{{ actor.name }} sort de la salle des enseignants."
+      open        :
+        - props   : portal:closed
+          actor   : *porte001
+          observer: *porte002
+        - props   : -portal:closed
+          actor   : &porte003 "La porte est déjà ouverte!"
+      open-with   :
+        - props   :
+            - portal:closed
+            - object2:key-for-salleens-000
+          effects :
+            type  : ChangePropEffect
+            modifs:
+              - -portal:closed
+          actor   : |
+            La porte de la salle des enseignants s'ouvre.
+          observer: |
+            {{ actor.name }} ouvre la porte de la salle des enseignants
+            avec une clé.
+        - props   :
+            - portal:closed
+            - -object2:key-for-salleens-000
+          actor   : |
+            Vous tentez vainement d'ouvrir la porte de la salle des enseignants avec
+            {{ object2.noun_the() }}
+          observer: |
+            {{ actor.name }} tente vainement d'ouvrir la porte de la salle des enseignants avec {{ object2.noun_a() }}
+        - props   :
+            - -portal:closed
+          actor   : *porte003
+          observer: |
+            {{ actor.name }} tente futilement d'ouvrir la porte de la salle des enseignants avec {{ object2.noun_a() }}, alors
+            qu'elle est déjà ouverte.
+  - id: ens-couloirrc-000
+    location: salle-ens-000
+    direction: nord
+    events:
+      enter-portal:
+        observer  : "{{ actor.name }} sort de la salle des enseignants."
+        failed:
+          actor   : |
+            La porte est fermée à clé.
+          observer: |
+            {{ actor.name }} tente en vain de sortir par la porte.
+---
+id: west-etage-000
+type: Portal
+exits:
+  - id: west-tetage-000
+    location: escalier-ouest-000
+    direction: haut
+  - id: etage-twest-000
+    location: etage-000
+    direction: bas
+---
+id: west-amphis-000
+type: Portal
+exits:
+  - id: west-toamphis-000
+    location: escalier-ouest-000
+    direction: ouest
+  - id: amphis-twest-000
+    location: amphis-000
+    direction: haut
+---
+id: east-etage-000
+type: Portal
+exits:
+  - id: east-tetage-000
+    location: escalier-est-000
+    direction: haut
+  - id: etage-teast-000
+    location: etage-east-000
+    direction: bas
+---
+id: east-center-000
+type: Portal
+exits:
+  - id: east-to-center-000
+    location: etage-east-000
+    direction: ouest
+  - id: center-to-east-000
+    location: etage-center-000
+    direction: est
+---
+id: east-south-000
+type: Portal
+exits:
+  - id: east-to-south-000
+    location: etage-east-000
+    direction: sud-ouest
+  - id: south-to-east-000
+    location: etage-south-000
+    direction: nord-est
+---
+id: west-21-000
+type: Portal
+props:
+  - closed
+exits:
+  - id: west-t21-000
+    location: etage-000
+    direction: ouest
+    name:
+      - porte
+    gender: fem
+    events:
+      enter-portal:
+        actor     : "Vous entrez dans la salle 21."
+        observer  : "{{ actor.name }} entre dans la salle 21."
+        failed:
+          actor   : &porte001 |
+            La porte de la salle 21 est verrouillée.
+          observer: &porte002 |
+            {{ actor.name }} tente en vain d'ouvrir la porte de la salle 21.
+      leave-portal:
+        actor     : "Vous sortez de la salle 21."
+        observer  : "{{ actor.name }} sort de la salle 21."
+      open        :
+        - props   : portal:closed
+          actor   : *porte001
+          observer: *porte002
+        - props   : -portal:closed
+          actor   : &porte003 "La porte est déjà ouverte!"
+      open-with   :
+        - props   :
+            - portal:closed
+            - object2:key-for-salle21-000
+          effects :
+            type  : ChangePropEffect
+            modifs:
+              - -portal:closed
+          actor   : |
+            La porte de la salle 21 s'ouvre.
+          observer: |
+            {{ actor.name }} ouvre la porte de la salle 21
+            avec une clé.
+        - props   :
+            - portal:closed
+            - -object2:key-for-salle21-000
+          actor   : |
+            Vous tentez vainement d'ouvrir la porte de la salle 21 avec
+            {{ object2.noun_the() }}
+          observer: |
+            {{ actor.name }} tente vainement d'ouvrir la porte de la salle 21 avec {{ object2.noun_a() }}
+        - props   :
+            - -portal:closed
+          actor   : *porte003
+          observer: |
+            {{ actor.name }} tente futilement d'ouvrir la porte de la salle 21 avec {{ object2.noun_a() }}, alors
+            qu'elle est déjà ouverte.
+  - id: 21-tetage-000
+    location: salle-21-000
+    direction: est
+    events:
+      enter-portal:
+        observer  : "{{ actor.name }} sort de la salle 21."
+        failed:
+          actor   : |
+            La porte est fermée à clé.
+          observer: |
+            {{ actor.name }} tente en vain de sortir par la porte.
+---
+id: west-center-000
+type: Portal
+exits:
+  - id: west-tcenter-000
+    location: etage-000
+    direction: est
+  - id: center-twest-000
+    location: etage-center-000
+    direction: ouest
+---
+id: center-serveur-000
+type: Portal
+props:
+  - closed
+exits:
+  - id: centre-tserv-000
+    location: etage-center-000
+    direction: nord
+    props:
+      - for-enter
+      - closed
+    name:
+      - porte
+    gender: fem
+    events:
+      enter-portal:
+        actor     : "Vous entrez dans la salle serveur."
+        observer  : "{{ actor.name }} entre dans la salle serveur."
+        failed:
+          actor   : &porte001 |
+            La porte de la salle serveur est verrouillée.
+          observer: &porte002 |
+            {{ actor.name }} tente en vain d'ouvrir la porte de la salle serveur.
+      leave-portal:
+        actor     : "Vous sortez de la salle serveur."
+        observer  : "{{ actor.name }} sort de la salle serveur."
+      open        :
+        - props   : portal:closed
+          actor   : *porte001
+          observer: *porte002
+        - props   : -portal:closed
+          actor   : &porte003 "La porte est déjà ouverte!"
+      open-with   :
+        - props   :
+            - portal:closed
+            - object2:key-for-serveur-000
+          effects :
+            type  : ChangePropEffect
+            modifs:
+              - -portal:closed
+          actor   : |
+            La porte de la salle serveur s'ouvre.
+          observer: |
+            {{ actor.name }} ouvre la porte de la salle serveur
+            avec une clé.
+        - props   :
+            - portal:closed
+            - -object2:key-for-serveur-000
+          actor   : |
+            Vous tentez vainement d'ouvrir la porte de la salle serveur avec
+            {{ object2.noun_the() }}
+          observer: |
+            {{ actor.name }} tente vainement d'ouvrir la porte de la salle serveur avec {{ object2.noun_a() }}
+        - props   :
+            - -portal:closed
+          actor   : *porte003
+          observer: |
+            {{ actor.name }} tente futilement d'ouvrir la porte de la salle serveur avec {{ object2.noun_a() }}, alors
+            qu'elle est déjà ouverte.
+  - id: serv-tcentre-000
+    location: salle-serveur-000
+    direction: sud
+    props:
+      - for-leave
+    events:
+      enter-portal:
+        observer  : "{{ actor.name }} sort de la salle serveur."
+        failed:
+          actor   : |
+            La porte est verrouillée.
+          observer: |
+            {{ actor.name }} tente en vain de sortir par la porte.
+---
+id: center-24-000
+type: Portal
+exits:
+  - id: centre-t24-000
+    location: etage-center-000
+    direction: nord-ouest
+  - id: 24-tcentre-000
+    location: salle-24-000
+    direction: sud-est
+    props:
+      - for-leave
+---
+id: etage-salle-22-000
+type: Portal
+exits:
+  - id: etage-000-nord-ouest
+    location: etage-000
+    direction: nord-ouest
+  - id: salle-22-000-sud-est
+    location: salle-22-000
+    direction: sud-est
+    props:
+      - for-leave
+---
+id: etage-23-000
+type: Portal
+exits:
+  - id: etage-t23-000
+    location: etage-000
+    direction: nord
+  - id: 23-etage-000
+    location: salle-23-000
+    direction: sud
+    props:
+      - for-leave
+---
+id: etage-tsouth-000
+type: Portal
+exits:
+  - id: etage-ts-000
+    location: etage-000
+    direction: sud-est
+  - id: south-tw-000
+    location: etage-south-000
+    direction: nord-ouest
+---
+id: center-south-000
+type: Portal
+exits:
+  - id: center-ts-000
+    location: etage-center-000
+    direction: sud
+  - id: south-tc-000
+    location: etage-south-000
+    direction: nord
+---
+id: elevator-south-000
+type: Portal
+exits:
+  - id: lift-ts-000
+    location: ascenseur-etage-000
+    direction: est
+  - id: south-tl-000
+    location: etage-south-000
+    direction: ouest
+---
+id: portal-ordinateur-station-000
+type: Portal
+exits:
+  - id: portal-ordinateur-station-000-exit-1
+    location: salle-22-000
+    events:
+      enter-portal:
+        actor: |
+          Une étrange lumière émane de l'écran et emplit
+          la salle.  Vous vous dématérialisez et êtes aspiré
+          dans le widget étiqueté "ENTREZ SANS FRAPPER"
+          sur l'écran.
+        observer: "{{ actor.name }} disparaît."
+      leave-portal:
+        actor   : "Vous vous rematérialisez en salle 22."
+        observer: "{{ actor.name }} apparaît de nulle part."
+  - id: portal-ordinateur-station-exit-2
+    location: station-000
+    direction: est
+    props:
+      - for-leave
+---
+id: portal-ordinateur-cabane-000
+type: Portal
+exits:
+  - id: portal-ordinateur-cabane-000-exit-1
+    location: salle-22-000
+    events:
+      enter-portal:
+        actor: |
+          Une étrange lumière émane de l'écran et emplit
+          la salle.  Vous vous dématérialisez et êtes aspiré
+          dans le widget étiqueté "ENTREZ SANS FRAPPER"
+          sur l'écran.
+        observer: "{{ actor.name }} disparaît."
+      leave-portal:
+        actor   : "Vous vous rematérialisez en salle 22."
+        observer: "{{ actor.name }} apparaît de nulle part."
+  - id: portal-ordinateur-cabane-exit-2
+    location: cabane-000
+    direction: est
+    props:
+      - for-leave
+    events:
+      enter-portal:
+        - props: exit:activated
+          actor: |
+            Vous sautez dans le vide.  Un tapis volant vous
+            cueille dans votre chute et plonge dans la cascade.
+          observer: |
+            {{ actor.name }} s'élance dans le vide.  Un tapis
+            volant le cueille dans sa chute et plonge dans la
+            cascade.
+          effects:
+            - type  : ChangePropEffect
+              modifs: -exit:activated
+        - actor: |
+            Vous sautez dans le vide et vous vous écrasez en
+            bas de la falaise.
+          observer: |
+            {{ actor.name }} s'élance dans le vide et s'écrase
+            en bas de la falaise.
+          data-driven: true
+          effects:
+            - type: DeathEffect
+---
+id: portal-cafeteria-souvenir-000
+type: Portal
+props:
+  - closed
+  - closable
+exits:
+  - id: cafeteria-000-sud
+    location: cafeteria-000
+    direction: ouest
+    name:
+      - machine
+    gender: fem
+    props:
+      - for-enter
+    events:
+      enter-portal:
+        actor     : "Vous entrez dans un souvenir encore inconnue."
+        observer  : "{{ actor.name }} rentre dans un souvenir inconnue."
+        failed:
+          actor   : &porte001 |
+            La machine à boisson n'accepte que les pieces d'1€ !
+          observer: &porte002 |
+            {{ actor.name }} tente en vain de payer la machine.
+      leave-portal:
+        actor     : "Vous sortez du souvenir."
+        observer  : "{{ actor.name }} sort du souvenir."
+      pay         :
+        - props   : portal:closed
+          actor   : *porte001
+          observer: *porte002
+        - props   : -portal:closed
+          actor   : &porte003 "Le souvenir est déjà ouverte!"
+      pay-with    :
+        - props   :
+            - portal:closed
+            - object2:piece-pour-machine-000
+          effects :
+            type  : ChangePropEffect
+            modifs:
+              - -portal:closed
+          actor   : |
+            Une porte apparait à la place de la machine à boisson.
+          observer: |
+            {{ actor.name }} fait apparaitre une nouvelle porte.
+        - props   :
+            - portal:closed
+            - -object2:piece-pour-machine-000
+          actor   : |
+            Vous tentez vainement de payer la machine avec
+            {{ object2.noun_the() }}
+          observer: |
+            {{ actor.name }} tente vainement de payer la
+            machine avec {{ object2.noun_a() }}
+        - props   :
+            - -portal:closed
+          actor   : *porte003
+          observer: |
+            {{ actor.name }} tente futilement de payer la machine
+            avec {{ object2.noun_a() }}, alors
+            qu'elle n'existe plus.
+      close       : &porte004
+        - props   : portal:closed
+          actor   : "Vous fermez le souvenir."
+          observer: "{{ actor.name }} ferme le souvenir."
+          effects :
+            - type  : ChangePropEffect
+              modifs: =portal-porche-hall-000:closed
+      close-with  : *porte004
+  - id: souvenir-000-ouest
+    location: souvenir-000
+    direction: sud
+    name: porte
+    gender: fem
+    props:
+      - for-leave
+    events:
+      enter-portal:
+        observer  : "{{ actor.name }} sort du souvenir."
+        failed:
+          actor   : |
+            La machine à boisson ne propose que des canettes de coca à 1€ piece
+---
+id: wstairs-nhallway-000
+type: Portal
+exits:
+  - id: ws-nh-000
+    location: escalier-ouest-000
+    direction: nord
+  - id: nh-ws-000
+    location: couloir-nord-000
+    direction: sud
+---
+id: estairs-ohallway-000
+type: Portal
+exits:
+  - id: es-oh-000
+    location: escalier-est-000
+    direction: nord
+  - id: oh-es-000
+    location: couloir-bureaux-000
+    direction: sud
+---
+id: hallway-office-000
+type: Portal
+exits:
+  - id: oh-mpo-000
+    location: couloir-bureaux-000
+    direction: nord
+    props:
+      - for-enter
+  - id: mpo-oh-000
+    location: bureau-000
+    direction: sud
+    props:
+      - for-leave
